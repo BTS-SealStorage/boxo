@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/alecthomas/units v0.0.0-20210927113745-59d0afb8317a
+	github.com/aws/aws-sdk-go v1.44.319
 	github.com/benbjohnson/clock v1.3.0
 	github.com/cespare/xxhash/v2 v2.2.0
 	github.com/crackcomm/go-gitignore v0.0.0-20170627025303-887ab5e44cc3
@@ -117,6 +118,7 @@ require (
 	github.com/ipld/go-car/v2 v2.9.1-0.20230325062757-fff0e4397a3d // indirect
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
 	github.com/jbenet/go-temp-err-catcher v0.1.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.3 // indirect
 	github.com/koron/go-ssdp v0.0.3 // indirect
