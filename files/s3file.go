@@ -10,14 +10,18 @@ import (
 	"os"
 )
 
-type S3Connection struct {
+type S3Credential struct {
 	id                    string
 	aws_access_key_id     string
 	aws_secret_access_key string
 	region                string
 	bucket                string
 	endpoint              string
-	conn                  s3iface.S3API
+}
+
+type S3Connection struct {
+	cred S3Credential
+	conn s3iface.S3API
 }
 
 // S3File is an implementation of File which reads it
@@ -27,13 +31,15 @@ type S3File struct {
 	body          io.ReadCloser
 	url           *url.URL
 	contentLength int64
+	s3conn        S3Connection
 }
 
 // NewS3File creates a S3File with the given URL, which
 // will be used to perform the GET request on Read().
-func NewS3File(url *url.URL) *S3File {
+func NewS3File(s3conn S3Connection, url *url.URL) *S3File {
 	return &S3File{
-		url: url,
+		url:    url,
+		s3conn: s3conn,
 	}
 }
 
