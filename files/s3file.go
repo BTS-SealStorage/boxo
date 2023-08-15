@@ -3,26 +3,12 @@ package files
 import (
 	"errors"
 	"fmt"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	s3 "github.com/ipfs/boxo/s3connection"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 )
-
-type S3Credential struct {
-	id                    string
-	aws_access_key_id     string
-	aws_secret_access_key string
-	region                string
-	bucket                string
-	endpoint              string
-}
-
-type S3Connection struct {
-	cred S3Credential
-	conn s3iface.S3API
-}
 
 // S3File is an implementation of File which reads it
 // from a S3 URI. A READ request will be performed
@@ -31,12 +17,12 @@ type S3File struct {
 	body          io.ReadCloser
 	url           *url.URL
 	contentLength int64
-	s3conn        S3Connection
+	s3conn        s3.S3Backend
 }
 
 // NewS3File creates a S3File with the given URL, which
 // will be used to perform the GET request on Read().
-func NewS3File(s3conn S3Connection, url *url.URL) *S3File {
+func NewS3File(s3conn s3.S3Backend, url *url.URL) *S3File {
 	return &S3File{
 		url:    url,
 		s3conn: s3conn,
@@ -47,12 +33,18 @@ func (s3f *S3File) start() error {
 	if s3f.body == nil {
 		s := s3f.url.String()
 		resp, err := http.Get(s)
+		//fileSize, err := getFileSize(s3f.conn, s3f.cred.Bucket, s3f.cred.AwsSecretAccessKey)
 		if err != nil {
 			return err
 		}
 		if resp.StatusCode < 200 || resp.StatusCode > 299 {
 			return fmt.Errorf("got non-2XX status code %d: %s", resp.StatusCode, s)
 		}
+		/*		resp, err := s3f.conn.GetObject(&s3.GetObjectInput{Key: &s})
+				if *(resp.ContentLength) != fileSize {
+				  return nil // TODO
+				}*/
+
 		s3f.body = resp.Body
 		s3f.contentLength = resp.ContentLength
 	}
