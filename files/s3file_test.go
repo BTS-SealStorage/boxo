@@ -2,12 +2,23 @@ package files
 
 import (
 	"fmt"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
 )
+
+type mockS3Client struct {
+	s3iface.S3API
+}
+
+func (m *mockS3Client) AbortMultipartUpload(input *s3.AbortMultipartUploadInput) (*s3.AbortMultipartUploadOutput, error) {
+	// mock response/functionality
+	return nil, nil
+}
 
 func TestS3File(t *testing.T) {
 	const content = "Hello world!"

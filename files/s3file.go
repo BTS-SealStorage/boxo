@@ -5,7 +5,6 @@ import (
 	"fmt"
 	s3 "github.com/ipfs/boxo/s3connection"
 	"io"
-	"net/http"
 	"net/url"
 	"os"
 )
@@ -31,22 +30,21 @@ func NewS3File(s3conn s3.S3Backend, url *url.URL) *S3File {
 
 func (s3f *S3File) start() error {
 	if s3f.body == nil {
-		s := s3f.url.String()
-		resp, err := http.Get(s)
-		//fileSize, err := getFileSize(s3f.conn, s3f.cred.Bucket, s3f.cred.AwsSecretAccessKey)
+		fileSize, err := s3f.s3conn.FileInfo(s3f.url)
 		if err != nil {
 			return err
 		}
-		if resp.StatusCode < 200 || resp.StatusCode > 299 {
-			return fmt.Errorf("got non-2XX status code %d: %s", resp.StatusCode, s)
+		body, size, err := s3f.s3conn.Download(s3f.url)
+		if err != nil {
+			return err
 		}
-		/*		resp, err := s3f.conn.GetObject(&s3.GetObjectInput{Key: &s})
-				if *(resp.ContentLength) != fileSize {
-				  return nil // TODO
-				}*/
+		if size != fileSize {
+			return fmt.Errorf("S3 file size incorrect")
+		}
 
-		s3f.body = resp.Body
-		s3f.contentLength = resp.ContentLength
+		s3f.body = body
+		s3f.contentLength = size
+		return nil
 	}
 	return nil
 }

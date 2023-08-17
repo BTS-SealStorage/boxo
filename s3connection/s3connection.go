@@ -6,6 +6,6 @@ import (
 )
 
 type S3Backend interface {
-	FileInfo(url.URL) (int64, error)
-	Download(url.URL) io.ReadCloser
+	FileInfo(*url.URL) (int64, error)
+	Download(*url.URL) (io.ReadCloser, int64, error)
 }
